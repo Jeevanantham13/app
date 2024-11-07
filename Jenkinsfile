@@ -8,31 +8,52 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
+                echo 'Cloning repository...'
                 git 'https://github.com/Jeevanantham13/app.git'
             }
         }
         stage('Build Docker Image') {
             steps {
+                echo 'Building Docker image...'
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    try {
+                        docker.build(DOCKER_IMAGE)
+                        echo 'Docker image built successfully.'
+                    } catch (Exception e) {
+                        echo "Docker build failed: ${e.getMessage()}"
+                        throw e
+                    }
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
+                echo 'Pushing Docker image to Docker Hub...'
                 script {
-                    // Use the 'dockerhub' credentials ID for Docker Hub login
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        docker.image(DOCKER_IMAGE).push("latest")
+                    try {
+                        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+                            docker.image(DOCKER_IMAGE).push("latest")
+                            echo 'Docker image pushed to Docker Hub.'
+                        }
+                    } catch (Exception e) {
+                        echo "Docker push failed: ${e.getMessage()}"
+                        throw e
                     }
                 }
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
+                echo 'Deploying to Kubernetes...'
                 script {
-                    sh "kubectl apply -f ${KUBERNETES_DEPLOYMENT}"
-                    sh "kubectl apply -f ${KUBERNETES_SERVICE}"
+                    try {
+                        kubectl apply -f KUBERNETES_DEPLOYMENT
+                        kubectl apply -f KUBERNETES_SERVICE
+                        echo 'Kubernetes deployment and service applied successfully.'
+                    } catch (Exception e) {
+                        echo "Kubernetes deployment failed: ${e.getMessage()}"
+                        throw e
+                    }
                 }
             }
         }
