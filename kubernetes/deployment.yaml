@@ -1,9 +1,9 @@
-# kubernetes/deployment.yaml
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-app-deployment
+  labels:
+    app: my-app
 spec:
   replicas: 3
   selector:
@@ -15,7 +15,10 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: my-app-container
-        image: your-dockerhub-username/my-app:latest
-        ports:
-        - containerPort: 3000
+        - name: my-app-container
+          image: jeeva2407/my-app:latest # Your Docker image
+          ports:
+            - containerPort: 3000 # The port your app listens on
+          env:
+            - name: NODE_ENV
+              value: "production" # Optional: Set the environment for Node.js app
