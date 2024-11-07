@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'jeeva2407/my-app:latest'
+        DOCKER_IMAGE = 'jeeva2407/myimage:latest' // Update the Docker image name to match your repository
     }
     stages {
         stage('Clone Repository') {
@@ -15,7 +15,7 @@ pipeline {
                 echo 'Building Docker image...'
                 script {
                     try {
-                        docker.build(DOCKER_IMAGE)
+                        docker.build(DOCKER_IMAGE)  // Build the Docker image
                         echo 'Docker image built successfully.'
                     } catch (Exception e) {
                         echo "Docker build failed: ${e.getMessage()}"
@@ -30,7 +30,7 @@ pipeline {
                 script {
                     try {
                         docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                            docker.image(DOCKER_IMAGE).push("latest")
+                            docker.image(DOCKER_IMAGE).push("latest") // Pushing to the updated repository
                             echo 'Docker image pushed to Docker Hub.'
                         }
                     } catch (Exception e) {
