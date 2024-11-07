@@ -1,0 +1,41 @@
+// Jenkinsfile
+
+pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE = 'your-dockerhub-username/my-app:latest'
+        KUBERNETES_DEPLOYMENT = 'kubernetes/deployment.yaml'
+        KUBERNETES_SERVICE = 'kubernetes/service.yaml'
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/your-username/my-app.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE)
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
+                        docker.image(DOCKER_IMAGE).push("latest")
+                    }
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    kubectl.apply -f KUBERNETES_DEPLOYMENT
+                    kubectl.apply -f KUBERNETES_SERVICE
+                }
+            }
+        }
+    }
+}
