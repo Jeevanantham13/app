@@ -1,5 +1,3 @@
-// Jenkinsfile
-
 pipeline {
     agent any
     environment {
@@ -33,8 +31,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    kubectl.apply -f KUBERNETES_DEPLOYMENT
-                    kubectl.apply -f KUBERNETES_SERVICE
+                    sh "kubectl apply -f ${KUBERNETES_DEPLOYMENT}"
+                    sh "kubectl apply -f ${KUBERNETES_SERVICE}"
                 }
             }
         }
