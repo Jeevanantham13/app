@@ -7,7 +7,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo 'Cloning repository...'
-                git 'https://github.com/Jeevanantham13/app.git'
+                git branch: 'main', url: 'https://github.com/Jeevanantham13/app.git'  // Specify 'main' if it is the correct branch
             }
         }
         stage('Build Docker Image') {
