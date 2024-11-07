@@ -2,8 +2,6 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = 'jeeva2407/my-app:latest'
-        KUBERNETES_DEPLOYMENT = 'kubernetes/deployment.yaml'
-        KUBERNETES_SERVICE = 'kubernetes/service.yaml'
     }
     stages {
         stage('Clone Repository') {
@@ -37,21 +35,6 @@ pipeline {
                         }
                     } catch (Exception e) {
                         echo "Docker push failed: ${e.getMessage()}"
-                        throw e
-                    }
-                }
-            }
-        }
-        stage('Deploy to Kubernetes') {
-            steps {
-                echo 'Deploying to Kubernetes...'
-                script {
-                    try {
-                        kubectl apply -f KUBERNETES_DEPLOYMENT
-                        kubectl apply -f KUBERNETES_SERVICE
-                        echo 'Kubernetes deployment and service applied successfully.'
-                    } catch (Exception e) {
-                        echo "Kubernetes deployment failed: ${e.getMessage()}"
                         throw e
                     }
                 }
